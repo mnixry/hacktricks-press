@@ -1,4 +1,6 @@
-import type MarkdownIt from "markdown-it";
+import type { MarkdownOptions } from "vitepress";
+
+export type MarkdownIt = Parameters<NonNullable<MarkdownOptions["config"]>>[0];
 
 const GITBOOK_BLOCK_REGEX = /^{%\s*(?<type>[\w-]+)\s+(?<params>.*?)\s*%}/;
 const GITBOOK_BLOCK_END_REGEX = /^{%\s*end(?<type>[\w-]+)\s*%}/;
