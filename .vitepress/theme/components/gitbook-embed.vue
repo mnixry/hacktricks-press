@@ -1,25 +1,13 @@
 <template>
-  <div v-if="isTrustedDomain" class="gitbook-embed">
-    <iframe
-      :src="props.url"
-      frameborder="0"
-      allowfullscreen
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    ></iframe>
-  </div>
-  <div v-else>
-    <p>Embedding content from this domain is not allowed.</p>
+  <div class="custom-block github-alert outline-dashed outline-1">
+    <div class="uppercase text-xs pb-1">⛓️ External Link</div>
+    <div class="text-base pb-2 overflow-hidden text-ellipsis text-nowrap">
+      <a :href="url" target="_blank" rel="noopener noreferrer">
+        {{ url }}
+      </a>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
-import { computed } from "vue";
-
-const TRUSTED_DOMAINS = ["gitbook.com", "gitbook.io"];
-
-const props = defineProps<{ url: string }>();
-
-const isTrustedDomain = computed(() => {
-  const url = new URL(props.url);
-  return TRUSTED_DOMAINS.includes(url.hostname);
-});
+defineProps<{ url: string }>();
 </script>
