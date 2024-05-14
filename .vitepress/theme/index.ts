@@ -7,6 +7,8 @@ import "./tailwind.postcss";
 
 import GitBookHint from "./components/gitbook-hint.vue";
 import GitBookEmbed from "./components/gitbook-embed.vue";
+import GitBookTab from "./components/gitbook-tab.vue";
+import GitbookTabs from "./components/gitbook-tabs.vue";
 
 export default {
   extends: DefaultTheme,
@@ -18,6 +20,8 @@ export default {
   enhanceApp({ app, router, siteData }) {
     app
       .component("gitbook-hint", GitBookHint)
-      .component("gitbook-embed", GitBookEmbed);
+      .component("gitbook-embed", GitBookEmbed)
+      .component("gitbook-tabs", GitbookTabs)
+      .component("gitbook-tab", GitBookTab);
   },
 } satisfies Theme;
