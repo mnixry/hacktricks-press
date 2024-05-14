@@ -3,9 +3,10 @@ import { h } from "vue";
 import type { Theme } from "vitepress";
 import DefaultTheme from "vitepress/theme";
 import "./style.css";
-import "./tailwind.postcss"
+import "./tailwind.postcss";
 
 import GitBookHint from "./components/gitbook-hint.vue";
+import GitBookEmbed from "./components/gitbook-embed.vue";
 
 export default {
   extends: DefaultTheme,
@@ -15,6 +16,8 @@ export default {
     });
   },
   enhanceApp({ app, router, siteData }) {
-    app.component('GitBookHint', GitBookHint);
+    app
+      .component("gitbook-hint", GitBookHint)
+      .component("gitbook-embed", GitBookEmbed);
   },
 } satisfies Theme;
