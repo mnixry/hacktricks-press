@@ -14,8 +14,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/escape-html": "^1.0.4",
     "@types/node": "^20.12.11",
     "autoprefixer": "^10.4.19",
+    "escape-html": "^1.0.3",
     "markdown-it-task-lists": "^2.1.1",
     "postcss": "^8.4.38",
     "postcss-preset-env": "^9.5.12",
