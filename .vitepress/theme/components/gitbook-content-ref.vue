@@ -2,8 +2,8 @@
   <div
     class="custom-block outline outline-1 outline-gray-400 dark:outline-gray-600"
   >
-    <div class="uppercase text-xs pb-1">📖 Read more</div>
-    <div v-if="inferredTitle">
+    <div class="uppercase text-xs">📖 Read more</div>
+    <div v-if="noSlot || inferredTitle" class="py-2">
       <div class="text-base overflow-hidden text-ellipsis text-nowrap">
         <a :href="props.url.replace(/\.md$/, '.html')">
           {{ inferredTitle ?? props.url.split("/").pop() }}
@@ -23,7 +23,7 @@ import { useRoute } from "vitepress";
 import { useSidebar, DefaultTheme } from "vitepress/theme";
 import { computed } from "vue";
 
-const props = defineProps<{ url: string }>();
+const props = defineProps<{ url: string; noSlot?: boolean }>();
 
 function findPageTitle(
   sidebar: DefaultTheme.SidebarItem[],
@@ -61,7 +61,6 @@ const inferredTitle = computed(() => {
     trimmedPath = join(trimmedPath, "..");
   let fullPath = join(trimmedPath, props.url);
   if (fullPath.startsWith("/")) fullPath = fullPath.slice(1);
-  console.log(fullPath);
   return findPageTitle(sidebar.value, fullPath);
 });
 </script>

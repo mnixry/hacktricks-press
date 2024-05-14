@@ -3,11 +3,11 @@
     :class="[
       'custom-block',
       'flex flex-row justify-start items-baseline',
-      ALERT_CLASS_MAP[type],
+      ALERT_CLASS_MAP[styleType],
     ]"
   >
     <p class="custom-block-title pr-2">
-      {{ ALERT_CLASS_EMOJI_MAP[type] }}
+      {{ ALERT_CLASS_EMOJI_MAP[styleType] }}
     </p>
     <p>
       <slot />
@@ -31,6 +31,6 @@ const ALERT_CLASS_EMOJI_MAP = {
 };
 
 defineProps<{
-  type: string;
+  styleType: string;
 }>();
 </script>

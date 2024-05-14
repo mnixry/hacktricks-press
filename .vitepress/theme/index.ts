@@ -5,13 +5,6 @@ import DefaultTheme from "vitepress/theme";
 import "./style.css";
 import "./tailwind.postcss";
 
-import GitBookHint from "./components/gitbook-hint.vue";
-import GitBookEmbed from "./components/gitbook-embed.vue";
-import GitBookTab from "./components/gitbook-tab.vue";
-import GitBookTabs from "./components/gitbook-tabs.vue";
-import GitBookContentRef from "./components/gitbook-content-ref.vue";
-import GitBookFile from "./components/gitbook-file.vue";
-
 export default {
   extends: DefaultTheme,
   Layout: () => {
@@ -19,13 +12,39 @@ export default {
       // https://vitepress.dev/guide/extending-default-theme#layout-slots
     });
   },
-  enhanceApp({ app, router, siteData }) {
+  async enhanceApp({ app, router, siteData }) {
     app
-      .component("gitbook-hint", GitBookHint)
-      .component("gitbook-embed", GitBookEmbed)
-      .component("gitbook-tabs", GitBookTabs)
-      .component("gitbook-tab", GitBookTab)
-      .component("gitbook-content-ref", GitBookContentRef)
-      .component('gitbook-file', GitBookFile)
+      .component(
+        "gitbook-code",
+        (await import("./components/gitbook-code.vue")).default
+      )
+      .component(
+        "gitbook-content-ref",
+        (await import("./components/gitbook-content-ref.vue")).default
+      )
+      .component(
+        "gitbook-embed",
+        (await import("./components/gitbook-embed.vue")).default
+      )
+      .component(
+        "gitbook-file",
+        (await import("./components/gitbook-file.vue")).default
+      )
+      .component(
+        "gitbook-hint",
+        (await import("./components/gitbook-hint.vue")).default
+      )
+      .component(
+        "gitbook-page-ref",
+        (await import("./components/gitbook-page-ref.vue")).default
+      )
+      .component(
+        "gitbook-tabs",
+        (await import("./components/gitbook-tabs.vue")).default
+      )
+      .component(
+        "gitbook-tab",
+        (await import("./components/gitbook-tab.vue")).default
+      );
   },
 } satisfies Theme;
