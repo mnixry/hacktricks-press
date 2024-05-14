@@ -7,6 +7,7 @@ const GITBOOK_BLOCK_END_REGEX = /^{%\s*end(?<type>[\w-]+)\s*%}/;
 
 const GITBOOK_INLINE_TYPES = [
   "embed", // {% embed url="https://www.youtube.com/watch?v=..." %}
+  "file", // {% file src="./index.js" %}
 ] as const;
 
 function parseParams(params: string) {
