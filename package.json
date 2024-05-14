@@ -14,10 +14,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/markdown-it": "^14.1.1",
     "@types/node": "^20.12.11",
     "autoprefixer": "^10.4.19",
-    "markdown-it": "^14.1.0",
     "markdown-it-task-lists": "^2.1.1",
     "postcss": "^8.4.38",
     "postcss-preset-env": "^9.5.12",
