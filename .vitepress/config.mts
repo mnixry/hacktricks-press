@@ -54,13 +54,25 @@ export default async () => {
           return `<gitbook-embed url="${url}" />`;
         };
 
+        md.renderer.rules["gitbook-file"] = (tokens, idx) => {
+          const { src } = tokens[idx].meta;
+          return `<gitbook-file src="${src}" />`;
+        };
+
         md.renderer.rules["gitbook-hint-open"] = (tokens, idx) => {
           const { style } = tokens[idx].meta;
           return `<gitbook-hint type="${style}" >`;
         };
-
         md.renderer.rules["gitbook-hint-close"] = () => {
           return "</gitbook-hint>";
+        };
+
+        md.renderer.rules["gitbook-content-ref-open"] = (tokens, idx) => {
+          const { url } = tokens[idx].meta;
+          return `<gitbook-content-ref url="${url}">`;
+        };
+        md.renderer.rules["gitbook-content-ref-close"] = () => {
+          return "</gitbook-content-ref>";
         };
 
         md.renderer.rules["gitbook-tabs-open"] = () => "<gitbook-tabs>";
@@ -71,10 +83,29 @@ export default async () => {
         };
         md.renderer.rules["gitbook-tab-close"] = () => "</gitbook-tab>";
 
-        const defaultRenderToken = md.renderer.renderToken.bind(md.renderer);
-        md.renderer.renderToken = (tokens, idx, options) => {
-          tokens[idx].attrSet("v-pre", "");
-          return defaultRenderToken(tokens, idx, options);
+        function escapeText(
+          token: Parameters<typeof md.renderer.renderToken>[0][number]
+        ) {
+          if (token.type === "text") {
+            token.content = token.content.replace(
+              /[{}]/g,
+              (c) => `&#${c.charCodeAt(0)};`
+            );
+          }
+          if (token.tag === "code" || token.tag === "pre") {
+            token.attrSet("v-pre", "");
+          }
+          for (const child of token.children ?? []) {
+            escapeText(child);
+          }
+        }
+
+        const defaultRender = md.renderer.render;
+        md.renderer.render = (tokens, options, env) => {
+          for (const token of tokens) {
+            escapeText(token);
+          }
+          return defaultRender(tokens, options, env);
         };
 
         if (sidebar.length === 0) summaryToSidebar(md, sidebar, summaryFile);
