@@ -1,9 +1,17 @@
 <template>
-  <div :class="`custom-block github-alert ${ALERT_CLASS_MAP[type]}`">
-    <p class="custom-block-title">
-      {{ ALERT_CLASS_EMOJI_MAP[type] }} {{ type.toLocaleUpperCase() }}
+  <div
+    :class="[
+      'custom-block',
+      'flex flex-row justify-start items-baseline',
+      ALERT_CLASS_MAP[type],
+    ]"
+  >
+    <p class="custom-block-title pr-2">
+      {{ ALERT_CLASS_EMOJI_MAP[type] }}
     </p>
-    <slot />
+    <p>
+      <slot />
+    </p>
   </div>
 </template>
 <script setup lang="ts">
