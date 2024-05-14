@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 
 import { defineConfig, type DefaultTheme } from "vitepress";
 import taskLists from "markdown-it-task-lists";
+import escape from "escape-html";
 
 import gitBookPlugin from "./markdown.mts";
 import summaryToSidebar from "./summary.mts";
@@ -16,13 +17,15 @@ export default async () => {
     srcDir: "hacktricks",
     rewrites: {
       "README.md": "index.md",
+      ":path(.*)/README.md": ":path/index.md",
     },
-
     title: "HackTricks Press",
     description: "VitePress verison of book.hacktricks.xyz",
     themeConfig: {
       // https://vitepress.dev/reference/default-theme-config
       sidebar,
+      outline: "deep",
+      lastUpdated: {},
     },
 
     ignoreDeadLinks: true,
@@ -42,6 +45,7 @@ export default async () => {
           },
         },
       ],
+      assetsInclude: ["**/.gitbook/**/*"],
     },
 
     markdown: {
@@ -57,6 +61,11 @@ export default async () => {
         md.renderer.rules["gitbook-file"] = (tokens, idx) => {
           const { src } = tokens[idx].meta;
           return `<gitbook-file src="${src}" />`;
+        };
+
+        md.renderer.rules["gitbook-page-ref"] = (tokens, idx) => {
+          const { page } = tokens[idx].meta;
+          return `<gitbook-page-ref page="${page}" />`;
         };
 
         md.renderer.rules["gitbook-hint-open"] = (tokens, idx) => {
@@ -86,13 +95,10 @@ export default async () => {
         function escapeText(
           token: Parameters<typeof md.renderer.renderToken>[0][number]
         ) {
-          if (token.type === "text") {
-            token.content = token.content.replace(
-              /[{}]/g,
-              (c) => `&#${c.charCodeAt(0)};`
-            );
+          if (token.type === "html_inline" && !token.content.startsWith("&")) {
+            token.content = escape(token.content);
           }
-          if (token.tag === "code" || token.tag === "pre") {
+          if (["code", "p"].includes(token.tag)) {
             token.attrSet("v-pre", "");
           }
           for (const child of token.children ?? []) {

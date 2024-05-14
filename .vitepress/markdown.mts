@@ -2,15 +2,7 @@ import type { MarkdownOptions } from "vitepress";
 
 export type MarkdownIt = Parameters<NonNullable<MarkdownOptions["config"]>>[0];
 
-const GITBOOK_BLOCK_REGEX = /^{%\s*(?<type>[\w-]+)\s+(?<params>.*?)\s*%}/;
-const GITBOOK_BLOCK_END_REGEX = /^{%\s*end(?<type>[\w-]+)\s*%}/;
-
-const GITBOOK_INLINE_TYPES = [
-  "embed", // {% embed url="https://www.youtube.com/watch?v=..." %}
-  "file", // {% file src="./index.js" %}
-] as const;
-
-function parseParams(params: string) {
+function parseParams(params: string): Record<string, string> {
   const meta = {};
   for (const { groups } of params.matchAll(
     /(?<key>\w+)=(?<value>".+?(?<!\\)"|'.+?(?<!\\)'|\S+)/g
@@ -25,26 +17,11 @@ function parseParams(params: string) {
   return meta;
 }
 
-function gitBookInline(md: MarkdownIt) {
-  md.inline.ruler.before("text", "gitbook", (state, silent) => {
-    const pos = state.pos;
-    const max = state.posMax;
-    if (pos >= max) return false;
-
-    const match = state.src.slice(pos).match(GITBOOK_BLOCK_REGEX);
-    if (!match) return false;
-
-    const { type, params } = match.groups!;
-    if (!GITBOOK_INLINE_TYPES.includes(type as any)) return false;
-
-    if (silent) return true;
-
-    const token = state.push(`gitbook-${type}`, "div", 0);
-    token.meta = parseParams(params);
-    state.pos += match[0].length;
-    return true;
-  });
-}
+const GITBOOK_INLINE_TYPES = [
+  "embed", // {% embed url="https://www.youtube.com/watch?v=..." %}
+  "file", // {% file src="./index.js" %}
+  "page-ref", // {% page-ref page="./" %}
+];
 
 const GITBOOK_BLOCK_TYPES = [
   "hint", // {% hint style="tip" %} ... {% endhint %}
@@ -52,7 +29,14 @@ const GITBOOK_BLOCK_TYPES = [
   "tabs", // {% tabs %} ... {% endtabs %}
   "tab", // {% tab title="Title" %} ... {% endtab %}
   "content-ref", // {% content-ref url="./" %} ... {% endcontent-ref %}
-] as const;
+];
+
+const GITBOOK_BLOCK_REGEX = new RegExp(
+  /^{%\s*(?<type>TYPES)\s+(?<params>.*?)\s*%}/.source.replace(
+    "TYPES",
+    [...GITBOOK_INLINE_TYPES, ...GITBOOK_BLOCK_TYPES].join("|")
+  )
+);
 
 function gitBookBlock(md: MarkdownIt) {
   md.block.ruler.before(
@@ -63,11 +47,10 @@ function gitBookBlock(md: MarkdownIt) {
       const max = state.eMarks[startLine];
       if (pos >= max) return false;
 
-      const match = state.src.slice(pos).match(GITBOOK_BLOCK_REGEX);
+      const match = state.src.slice(pos, max).match(GITBOOK_BLOCK_REGEX);
       if (!match) return false;
 
       const { type, params } = match.groups!;
-      if (!GITBOOK_BLOCK_TYPES.includes(type as any)) return false;
 
       if (silent) return true;
 
@@ -77,11 +60,24 @@ function gitBookBlock(md: MarkdownIt) {
       for (; nextLine < endLine; nextLine++) {
         const endTag = state.src
           .slice(state.bMarks[nextLine])
-          .match(GITBOOK_BLOCK_END_REGEX);
-        if (endTag && endTag.groups!.type === type) {
+          .match(new RegExp(`^{%\\s*end${type}\\s*%}`));
+        if (endTag) {
           autoClosed = true;
           break;
         }
+      }
+
+      const meta = parseParams(params);
+
+      if (GITBOOK_INLINE_TYPES.includes(type) && !autoClosed) {
+        // If it's an inline type and have no closing tag, assume it is a block
+        // that contains only one line
+        const openToken = state.push(`gitbook-${type}`, "div", 0);
+        openToken.meta = meta;
+        openToken.block = true;
+        openToken.map = [startLine, startLine + 1];
+        state.line = startLine + 1;
+        return true;
       }
 
       const oldParent = state.parentType;
@@ -90,7 +86,7 @@ function gitBookBlock(md: MarkdownIt) {
       state.lineMax = nextLine;
 
       const openToken = state.push(`gitbook-${type}-open`, "div", 1);
-      openToken.meta = parseParams(params);
+      openToken.meta = meta;
       openToken.block = true;
       openToken.map = [startLine, nextLine];
 
@@ -104,13 +100,10 @@ function gitBookBlock(md: MarkdownIt) {
       state.line = nextLine + (autoClosed ? 1 : 0);
 
       return true;
-    },
-    {
-      alt: ["paragraph", "reference", "blockquote", "list"],
     }
   );
 }
 
 export default function gitBookPlugin(md: MarkdownIt) {
-  md.use(gitBookInline).use(gitBookBlock);
+  md.use(gitBookBlock);
 }
