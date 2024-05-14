@@ -137,3 +137,13 @@
   --docsearch-primary-color: var(--vp-c-brand-1) !important;
 }
 
+figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem
+}
+
+figure img {
+  max-width: 100%;
+}
