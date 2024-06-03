@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 
 import { defineConfig, type DefaultTheme } from "vitepress";
+import { pagefindPlugin } from "vitepress-plugin-pagefind";
 import taskLists from "markdown-it-task-lists";
 
 import gitBookPlugin from "./markdown.mts";
@@ -32,6 +33,7 @@ export default async () => {
 
     vite: {
       plugins: [
+        pagefindPlugin(),
         {
           name: "broken-reference",
           async resolveId(source, importer, options) {
