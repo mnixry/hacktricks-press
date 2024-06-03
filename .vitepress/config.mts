@@ -28,7 +28,7 @@ export default async () => {
       nav: [{ text: "Table of Contents", link: "/SUMMARY.md" }],
       lastUpdated: {},
     },
-
+    cleanUrls: true,
     ignoreDeadLinks: true,
 
     vite: {
