@@ -25,6 +25,9 @@ import { computed } from "vue";
 
 const props = defineProps<{ url: string; noSlot?: boolean }>();
 
+const { path } = useRoute();
+const { sidebar } = useSidebar();
+
 function findPageTitle(
   sidebar: DefaultTheme.SidebarItem[],
   url: string
@@ -53,9 +56,6 @@ function join(...args: string[]) {
 }
 
 const inferredTitle = computed(() => {
-  const { path } = useRoute();
-  const { sidebar } = useSidebar();
-
   let trimmedPath = path;
   if (trimmedPath.length && !trimmedPath.endsWith("/"))
     trimmedPath = join(trimmedPath, "..");

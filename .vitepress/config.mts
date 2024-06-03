@@ -34,7 +34,8 @@ export default async () => {
       plugins: [
         {
           name: "broken-reference",
-          resolveId(source, importer, options) {
+          async resolveId(source, importer, options) {
+            if (!importer?.endsWith(".md")) return;
             console.warn("missing file", source, "importer", importer);
             return missingFileId;
           },
