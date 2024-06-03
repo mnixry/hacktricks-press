@@ -38,7 +38,6 @@ export default function summaryToSidebar(
       parent.push({
         text: title,
         items: [],
-        collapsed: headingLevel >= 2,
       });
     }
 
@@ -69,6 +68,7 @@ export default function summaryToSidebar(
       parent.push({
         text,
         link: href!,
+        collapsed: true,
       });
     }
 
