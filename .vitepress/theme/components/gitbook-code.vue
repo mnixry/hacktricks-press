@@ -31,7 +31,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { VNode, computed, useSlots } from "vue";
+import { type VNode, computed, useSlots } from "vue";
 
 const props = defineProps<{
   title?: string;

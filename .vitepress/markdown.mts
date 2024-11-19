@@ -1,3 +1,5 @@
+import path from "node:path";
+
 import type { MarkdownOptions } from "vitepress";
 import escape from "escape-html";
 
@@ -122,7 +124,7 @@ function createElement(
     type === "end" ? "/" : "",
     tagName,
     ...Object.entries(attrs).map(
-      ([key, value]) => ` ${escape(KEY_MAPPING[key] ?? key)}="${escape(value)}"`
+      ([key, value]) => ` ${KEY_MAPPING[key] ?? key}="${escape(value)}"`
     ),
     type === "self" ? "/" : "",
     ">",

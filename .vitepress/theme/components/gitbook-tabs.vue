@@ -14,7 +14,11 @@
           'rounded-t-lg',
         ]"
       >
-        <button :for="tab.title" @click="selectTab(tab)" class="px-4 py-2 stretched-link">
+        <button
+          :for="tab.title"
+          @click="selectTab(tab)"
+          class="px-4 py-2 stretched-link"
+        >
           {{ tab.title }}
         </button>
       </span>
@@ -28,12 +32,12 @@
 
 <script setup lang="ts">
 import { provide, ref } from "vue";
-import { TabProps, tabContextKey } from "./gitbook-tabs.model";
+import { type TabProps, tabContextKey } from "./gitbook-tabs.model";
 
 const tabs = ref<TabProps[]>([]);
 const activeTab = ref<TabProps>();
 
-function selectTab(tab) {
+function selectTab(tab: TabProps) {
   tabs.value.forEach((t) => t.setActivated(t === tab));
   activeTab.value = tab;
 }

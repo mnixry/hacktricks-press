@@ -20,7 +20,7 @@
 </template>
 <script setup lang="ts">
 import { useRoute } from "vitepress";
-import { useSidebar, DefaultTheme } from "vitepress/theme";
+import { useSidebar, type DefaultTheme } from "vitepress/theme";
 import { computed } from "vue";
 
 const props = defineProps<{ url: string; noSlot?: boolean }>();

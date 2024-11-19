@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [".vitepress/**/*.{js,ts,vue}", "**/*.md"],
+export default {
+  content: [".vitepress/**/*.{js,ts,vue}", "./hacktricks/**/*.md"],
   darkMode: ["selector"],
   theme: {
     extend: {},

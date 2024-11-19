@@ -49,6 +49,11 @@ export default async () => {
         },
       ],
       assetsInclude: ["**/.gitbook/**/*"],
+      resolve: {
+        alias: {
+          "@": "/",
+        },
+      }
     },
 
     markdown: {
